@@ -27,15 +27,14 @@ void sort()
       if (addr[i] > addr[i + 1])
       {
 
-        //Done.
+        // DONE
+        tmp = addr[i];
+        addr[i] = addr[i + 1];
+        addr[i + 1] = tmp;
 
-        addr[i] = tmp;
-        addr[i + 1] = addr[i];
-        tmp = addr[i + 1];
-
-        length[i] = tmp;
-        length[i + 1] = length[i];
-        tmp = length[i + 1];
+        tmp = length[i];
+        length[i] = length[i + 1];
+        length[i + 1] = tmp;
 
         sorted = false;
       }
@@ -52,7 +51,7 @@ long findFreeSpace(long size)
     if (addr[i] - prev > size)
       return prev;
 
-    //Done.
+    // DONE
     prev = addr[i] + length[i];
   }
   if (getMem() - prev > size)
@@ -69,14 +68,11 @@ void allocate(long size)
   }
   else
   {
-
-    //Done.
+    // DONE
     addr[noOfBlocks] = f;
     length[noOfBlocks] = size;
     noOfBlocks++;
-
-    cout << "Begin of the adress:  " << flush;
-
+    cout << noOfBlocks << endl;
     cout << f << endl;
   }
 }
@@ -84,7 +80,7 @@ void allocate(long size)
 void deallocate(long a)
 {
   bool found = false;
-  for (int i = 0; i < noOfBlocks; i++)
+  for (int i = 0; i <= noOfBlocks; i++)
   {
     if (addr[i] == a)
     {
@@ -94,9 +90,9 @@ void deallocate(long a)
     if (found)
     {
 
-      //Done.
-      addr[i] = 999;
-      length[i] = 0;
+      // DONE
+      addr[noOfBlocks] = 0;
+      length[noOfBlocks] = 0;
     }
   }
   if (!found)
@@ -109,8 +105,8 @@ long freeMem()
   for (int i = 0; i < noOfBlocks; i++)
   {
 
-    //Done.
-    storeByte(0, i);
+    // DONE
+    total = (total - length[i]);
   }
   return total;
 }
@@ -248,8 +244,8 @@ string retrieveChar(long a)
 {
   string ret;
 
-  //Done.
-  ret += recallByte(a);
+  // DONE
+  ret = recallByte(a);
 
   return ret;
 }
@@ -260,8 +256,8 @@ string retrieveInt(long a)
   int b2 = recallByte(a + 1);
   int i;
 
-  //Done.
-  i = (b1 << 8) + b2;
+  // DONE
+  i = b1 << 8 | b2;
 
   return to_string(i);
 }
@@ -282,11 +278,7 @@ string retrieveFloat(long a)
   mantissa += (long)b << 8;
   b = recallByte(a + 3);
   mantissa += b;
-  float number;
-
-  //Done.
-  number = sign * (float)mantissa / (1l << 23) * pow(2, exponent);
-
+  float number = sign * (float)mantissa / (1l << 23) * pow(2, exponent);
   return to_string(number);
 }
 
@@ -297,7 +289,7 @@ string retrieveString(long a)
   while ((c = (char)recallByte(a++)) != '\0')
   {
 
-    //Done.
+    // DONE
     ret += c;
   }
   return ret;
