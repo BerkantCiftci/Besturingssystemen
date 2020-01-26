@@ -1,4 +1,4 @@
-// Mehdi Benhammou | 0982653 | TI1A
+
 
 #include "tinbes.h"
 #include <math.h>
