@@ -1,4 +1,10 @@
-
+/*
+ *  Berkant Ciftci
+ *  0979368
+ *  Klas:TI1D
+ *  TINBES-01
+ *  Opdracht: 3
+ */
 
 #include "tinbes.h"
 #include <math.h>
@@ -9,22 +15,26 @@ long addr[TABLE_SIZE];
 long length[TABLE_SIZE];
 int noOfBlocks = 0;
 
-void sort() {
+void sort()
+{
   bool sorted = false;
   long tmp;
-  while (!sorted) {
+  while (!sorted)
+  {
     sorted = true;
-    for (int i = 0; i < noOfBlocks - 1; i++) {
-      if (addr[i] > addr[i + 1]) {
+    for (int i = 0; i < noOfBlocks - 1; i++)
+    {
+      if (addr[i] > addr[i + 1])
+      {
 
-        // DONE
-        tmp = addr[i];
-        addr[i] = addr[i + 1];
-        addr[i + 1] = tmp;
+        //Done.
+        addr[i] = tmp;
+        addr[i + 1] = addr[i];
+        tmp = addr[i + 1];
 
-        tmp = length[i];
-        length[i] = length[i + 1];
-        length[i + 1] = tmp;
+        length[i] = tmp;
+        length[i + 1] = length[i];
+        tmp = length[i + 1];
 
         sorted = false;
       }
@@ -32,110 +42,138 @@ void sort() {
   }
 }
 
-long findFreeSpace(long size) {
+long findFreeSpace(long size)
+{
   sort();
   long prev = 0;
-  for (int i = 0; i < noOfBlocks; i++) {
-    if (addr[i] - prev > size) return prev;
-    
-    // DONE
-     prev = addr[i] + length[i];
+  for (int i = 0; i < noOfBlocks; i++)
+  {
+    if (addr[i] - prev > size)
+      return prev;
 
+    //Done.
+    prev = addr[i] + length[i];
   }
-  if (getMem() - prev > size) return prev;
+  if (getMem() - prev > size)
+    return prev;
   return -1;
 }
 
-void allocate(long size) {
+void allocate(long size)
+{
   int f = findFreeSpace(size);
-  if (f == -1) {
-    cout << "Not enough memory." << endl;    
+  if (f == -1)
+  {
+    cout << "Not enough memory." << endl;
   }
-  else {
-    	// DONE
-        addr[noOfBlocks] = f;
-        length[noOfBlocks] = size;
-        noOfBlocks++;
-        cout << noOfBlocks << endl;
-	cout << f << endl;
+  else
+  {
+
+    //Done.
+    addr[noOfBlocks] = f;
+    length[noOfBlocks] = size;
+    noOfBlocks++;
+
+    cout << "Begin of the adress:  " << flush;
+
+    cout << f << endl;
   }
 }
 
-void deallocate(long a) {
+void deallocate(long a)
+{
   bool found = false;
-  for (int i = 0; i <= noOfBlocks; i++) {
-    if (addr[i] == a) {
+  for (int i = 0; i < noOfBlocks; i++)
+  {
+    if (addr[i] == a)
+    {
       found = true;
       noOfBlocks--;
     }
-    if (found) {
+    if (found)
+    {
 
-      // DONE
-      addr[noOfBlocks] = 0;
-      length[noOfBlocks] = 0;
+      //Done.
+      addr[i] = 999;
+      length[i] = 0;
     }
   }
-  if (!found) cout << "Address not allocated." << endl;
+  if (!found)
+    cout << "Address not allocated." << endl;
 }
 
-long freeMem() {
+long freeMem()
+{
   long total = getMem();
-  for (int i = 0; i < noOfBlocks; i++) {
+  for (int i = 0; i < noOfBlocks; i++)
+  {
 
     // DONE
-   total = (total - length[i]);
+    total = (total - length[i]);
   }
   return total;
 }
 
-void storeChar(long a, string data) {
+void storeChar(long a, string data)
+{
   storeByte(data[0], a);
 }
 
-void storeInt(long a, string data) {
+void storeInt(long a, string data)
+{
   int i = stoi(data);
   storeByte((i & 0xFF00) >> 8, a);
   storeByte(i & 0xFF, a + 1);
 }
 
-void storeFloat(long a, string data) {
+void storeFloat(long a, string data)
+{
   float number = stof(data);
   unsigned char sign = 0;
-  if (number < 0) {
+  if (number < 0)
+  {
     number = -number;
     sign = 128;
   }
   long integerPart = number;
   number -= integerPart;
   long fractionPart = 0;
-  for (int i = 22; i >= 0; i--) {
+  for (int i = 22; i >= 0; i--)
+  {
     number *= 2;
-    if (number >= 1) {
+    if (number >= 1)
+    {
       fractionPart += (1l << i);
       number -= 1;
     }
   }
   unsigned char exponent = 127;
-  while (integerPart != 1) {
-    if (integerPart > 1) {
+  while (integerPart != 1)
+  {
+    if (integerPart > 1)
+    {
       fractionPart = ((integerPart & 1) << 22) + (fractionPart >> 1);
       integerPart = integerPart >> 1;
       exponent++;
-    } else {
+    }
+    else
+    {
       integerPart = fractionPart >> 22;
       fractionPart = (fractionPart & 0x3FFFFF) << 1;
       number *= 2;
-      if (number > 1) {
+      if (number > 1)
+      {
         fractionPart++;
         number -= 1;
-      }        
+      }
       exponent--;
     }
   }
   unsigned char b = sign + (exponent >> 1);
   storeByte(b, a);
   b = fractionPart >> 16;
-  if (exponent & 1) b += 128;
+  if (exponent & 1)
+    b += 128;
   storeByte(b, a + 1);
   b = (fractionPart & 0xFF00) >> 8;
   storeByte(b, a + 2);
@@ -143,153 +181,197 @@ void storeFloat(long a, string data) {
   storeByte(b, a + 3);
 }
 
-void storeString(long a, string data) {
+void storeString(long a, string data)
+{
   int i;
-  for (i = 0; i < data.length(); i++) {
-    if (data[i] == '\\' && i + 1 < data.length()) {
+  for (i = 0; i < data.length(); i++)
+  {
+    if (data[i] == '\\' && i + 1 < data.length())
+    {
       a--;
-      if (data[++i] == 'n') {
+      if (data[++i] == 'n')
+      {
         storeByte('\n', a + i);
         continue;
-      } 
+      }
     }
     storeByte(data[i], a + i);
   }
   storeByte(0, a + i);
 }
 
-void store(long a, string type, string data) {
+void store(long a, string type, string data)
+{
   long size;
-  if (type == "CHAR") size = 1;
-  if (type == "INT") size = 2;
-  if (type == "FLOAT") size = 4;
-  if (type == "STRING") size = data.length() + 1;
+  if (type == "CHAR")
+    size = 1;
+  if (type == "INT")
+    size = 2;
+  if (type == "FLOAT")
+    size = 4;
+  if (type == "STRING")
+    size = data.length() + 1;
   bool fits = false;
-  for (int i = 0; i < noOfBlocks; i++) {
-    if (a >= addr[i] && a + size <= addr[i] + length[i]) {
+  for (int i = 0; i < noOfBlocks; i++)
+  {
+    if (a >= addr[i] && a + size <= addr[i] + length[i])
+    {
       fits = true;
       break;
     }
   }
-  if (!fits) {
+  if (!fits)
+  {
     cout << "Variable does not fit in allocated memory." << endl;
     return;
   }
-  if (type == "CHAR") {
+  if (type == "CHAR")
+  {
     storeChar(a, data);
   }
-  if (type == "INT") {
+  if (type == "INT")
+  {
     storeInt(a, data);
   }
-  if (type == "FLOAT") {
+  if (type == "FLOAT")
+  {
     storeFloat(a, data);
   }
-  if (type == "STRING") {
+  if (type == "STRING")
+  {
     storeString(a, data);
   }
 }
 
-string retrieveChar(long a) {
+string retrieveChar(long a)
+{
   string ret;
-  
-  // DONE
-  ret = recallByte(a);
+
+  //Done.
+  ret += recallByte(a);
 
   return ret;
 }
 
-string retrieveInt(long a) {
+string retrieveInt(long a)
+{
   int b1 = recallByte(a);
   int b2 = recallByte(a + 1);
   int i;
 
-  // DONE
-  i = b1 << 8 | b2;
+  //Done.
+  i = (b1 << 8) + b2;
 
   return to_string(i);
 }
 
-string retrieveFloat(long a) {
+string retrieveFloat(long a)
+{
   unsigned char b = recallByte(a);
   float sign = 1;
-  if (b & 128) sign = -1;
+  if (b & 128)
+    sign = -1;
   int exponent = (b & 0x7F) << 1;
   b = recallByte(a + 1);
-  if (b & 128) exponent++;
+  if (b & 128)
+    exponent++;
   exponent -= 127;
   long mantissa = ((long)b | 128) << 16;
   b = recallByte(a + 2);
   mantissa += (long)b << 8;
   b = recallByte(a + 3);
   mantissa += b;
-  float number = sign * (float)mantissa / (1l << 23) * pow(2, exponent);
+  float number;
+
+  //Done.
+  number = sign * (float)mantissa / (1l << 23) * pow(2, exponent);
+
   return to_string(number);
 }
 
-string retrieveString(long a) {
+string retrieveString(long a)
+{
   string ret;
   char c;
-  while ((c = (char)recallByte(a++)) != '\0') {
-    
-    // DONE
-     ret += c;
+  while ((c = (char)recallByte(a++)) != '\0')
+  {
 
+    //Done.
+    ret += c;
   }
   return ret;
 }
 
-string retrieve(long a, string type) {
+string retrieve(long a, string type)
+{
   long size;
-  if (type == "CHAR" || type == "STRING") size = 1;
-  if (type == "INT") size = 2;
-  if (type == "FLOAT") size = 4;
+  if (type == "CHAR" || type == "STRING")
+    size = 1;
+  if (type == "INT")
+    size = 2;
+  if (type == "FLOAT")
+    size = 4;
   bool addressOK = false;
-  for (int i = 0; i < noOfBlocks; i++) {
-    if (a >= addr[i] && a + size <= addr[i] + length[i]) {
+  for (int i = 0; i < noOfBlocks; i++)
+  {
+    if (a >= addr[i] && a + size <= addr[i] + length[i])
+    {
       addressOK = true;
       break;
     }
   }
-  if (!addressOK) {
+  if (!addressOK)
+  {
     return string("Address not in allocated memory.");
   }
-  if (type == "CHAR") {
+  if (type == "CHAR")
+  {
     return retrieveChar(a);
   }
-  if (type == "INT") {
+  if (type == "INT")
+  {
     return retrieveInt(a);
   }
-  if (type == "FLOAT") {
+  if (type == "FLOAT")
+  {
     return retrieveFloat(a);
   }
-  if (type == "STRING") {
+  if (type == "STRING")
+  {
     return retrieveString(a);
   }
   return string();
 }
 
-int main() {
+int main()
+{
   string command;
-  while (true) {
+  while (true)
+  {
     command = readLine();
-    if (command == "ALLOC") {
+    if (command == "ALLOC")
+    {
       long i = stoi(readLine());
       allocate(i);
     }
-    if (command == "DEALLOC") {
+    if (command == "DEALLOC")
+    {
       long i = stoi(readLine());
       deallocate(i);
     }
-    if (command == "FREEMEM") {
+    if (command == "FREEMEM")
+    {
       cout << freeMem() << endl;
     }
-    if (command == "SET") {
+    if (command == "SET")
+    {
       long i = stoi(readLine());
       string type = readLine();
       string data = readLine();
       store(i, type, data);
     }
-    if (command == "GET") {
+    if (command == "GET")
+    {
       long i = stoi(readLine());
       string type = readLine();
       cout << retrieve(i, type) << endl;
