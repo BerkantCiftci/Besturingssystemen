@@ -83,7 +83,7 @@ void allocate(long size)
 void deallocate(long a)
 {
   bool found = false;
-  for (int i = 0; i < noOfBlocks; i++)
+  for (int i = 0; i <= noOfBlocks; i++)
   {
     if (addr[i] == a)
     {
@@ -93,9 +93,9 @@ void deallocate(long a)
     if (found)
     {
 
-      //Done.
-      addr[i] = 999;
-      length[i] = 0;
+      // DONE
+      addr[noOfBlocks] = 0;
+      length[noOfBlocks] = 0;
     }
   }
   if (!found)
