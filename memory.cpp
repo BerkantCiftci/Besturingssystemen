@@ -1,11 +1,3 @@
-/*
- *  Berkant Ciftci
- *  0979368
- *  Klas:TI1D
- *  TINBES-01
- *  Opdracht: 3
- */
-
 #include "tinbes.h"
 #include <math.h>
 
@@ -27,15 +19,15 @@ void sort()
       if (addr[i] > addr[i + 1])
       {
 
-        // DONE
-        tmp = addr[i];
-        addr[i] = addr[i + 1];
-        addr[i + 1] = tmp;
+        //TO DO
 
         tmp = length[i];
-        length[i] = length[i + 1];
-        length[i + 1] = tmp;
+        length[i] = length[i + ];
+        length[i + ] = tmp;
 
+        tmp = addr[i];        //Als huidig adres groter is dan volgende, zet huidige in tmp
+        addr[i] = addr[i + ]; //zet inhoud van volgende adres in huidige.
+        addr[i + ] = tmp;     //zet wat nu in tmp staat in het volgende adres.
         sorted = false;
       }
     }
@@ -51,7 +43,8 @@ long findFreeSpace(long size)
     if (addr[i] - prev > size)
       return prev;
 
-    // DONE
+    //TO DO
+
     prev = addr[i] + length[i];
   }
   if (getMem() - prev > size)
@@ -68,11 +61,12 @@ void allocate(long size)
   }
   else
   {
-    // DONE
+
+    //TO DO
+
     addr[noOfBlocks] = f;
-    length[noOfBlocks] = size;
-    noOfBlocks++;
-    cout << noOfBlocks << endl;
+    length[noOfBlocks++] = size;
+
     cout << f << endl;
   }
 }
@@ -80,7 +74,7 @@ void allocate(long size)
 void deallocate(long a)
 {
   bool found = false;
-  for (int i = 0; i <= noOfBlocks; i++)
+  for (int i = 0; i < noOfBlocks; i++)
   {
     if (addr[i] == a)
     {
@@ -90,9 +84,10 @@ void deallocate(long a)
     if (found)
     {
 
-      // DONE
-      addr[noOfBlocks] = 0;
-      length[noOfBlocks] = 0;
+      //TO DO
+
+      addr[i] = addr[i + 1];
+      length[i] = length[i + 1];
     }
   }
   if (!found)
@@ -105,8 +100,9 @@ long freeMem()
   for (int i = 0; i < noOfBlocks; i++)
   {
 
-    // DONE
-    total = (total - length[i]);
+    //TO DO
+
+    total = total - length[i];
   }
   return total;
 }
@@ -244,7 +240,8 @@ string retrieveChar(long a)
 {
   string ret;
 
-  // DONE
+  //TO DO
+
   ret = recallByte(a);
 
   return ret;
@@ -256,8 +253,9 @@ string retrieveInt(long a)
   int b2 = recallByte(a + 1);
   int i;
 
-  // DONE
-  i = b1 << 8 | b2;
+  //TO DO
+
+  i = (b1 << 8) | b2;
 
   return to_string(i);
 }
@@ -278,7 +276,11 @@ string retrieveFloat(long a)
   mantissa += (long)b << 8;
   b = recallByte(a + 3);
   mantissa += b;
+
+  //TO DO
+
   float number = sign * (float)mantissa / (1l << 23) * pow(2, exponent);
+
   return to_string(number);
 }
 
@@ -289,7 +291,8 @@ string retrieveString(long a)
   while ((c = (char)recallByte(a++)) != '\0')
   {
 
-    // DONE
+    //TO DO
+
     ret += c;
   }
   return ret;
