@@ -32,10 +32,10 @@ int newProcess(string name, long address)
     }
     else
     {
-      for (int i = 0; i < sizeof(sToCh); i++)
+      for (int i = 0; i < sizeof(sToChArray); i++)
       {
         sToChArray[i] = name[i];
-        if (sToCh[i] == '0')
+        if (sToChArray[i] == '0')
         {
           cout << " 0 is een verboden karakter!" << endl;
           return -1;
