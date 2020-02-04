@@ -32,9 +32,9 @@ void sort()
                 addr[i] = addr[i + 1];
                 addr[i + 1] = tmp;
 
-                    tmp = length[i];
-                length[i] = length[i + 1];
-                length[i + 1] = tmp;
+                tmp = size[i];
+                size[i] = size[i + 1];
+                size[i + 1] = tmp;
 
                 s = name[i];
                 name[i] = name[i + 1];
@@ -53,16 +53,20 @@ long findFreeSpace(long fileSize)
     for (int i = 0; i < noOfFiles; i++)
     {
         // Verbeteren.
-        if (addr[i] - prev > fileSize) {
+        if (addr[i] - prev > fileSize)
+        {
             // prev += 1;
             return prev;
-        } else {
+        }
+        else
+        {
 
-        prev = addr[i] + size[i];
+            prev = addr[i] + size[i];
+        }
+        if (getSize() - prev > fileSize)
+            return prev;
+        return -1;
     }
-    if (getSize() - prev > fileSize)
-        return prev;
-    return -1;
 }
 
 int findFile(string fileName)
@@ -139,8 +143,7 @@ void erase(string fileName)
     addr[f] = 0;
     size[f] = 0;
     noOfFiles = -1;
-    
-                    
+
     cout << "Done!" << endl;
 }
 
