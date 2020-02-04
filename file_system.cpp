@@ -139,7 +139,7 @@ void erase(string fileName)
 
     cout << "File is being erased." << endl;
     sort();
-    name[f].clear();
+    name[f] = "";
     addr[f] = 0;
     size[f] = 0;
     noOfFiles = -1;
