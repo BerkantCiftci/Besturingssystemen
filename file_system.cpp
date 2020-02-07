@@ -32,9 +32,9 @@ void sort()
                 addr[i] = addr[i + 1];
                 addr[i + 1] = tmp;
 
-                tmp = length[i];
-                length[i] = length[i + 1];
-                length[i + 1] = tmp;
+                tmp = size[i];
+                size[i] = size[i + 1];
+                size[i + 1] = tmp;
 
                 s = name[i];
                 name[i] = name[i + 1];
