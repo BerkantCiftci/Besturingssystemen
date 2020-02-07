@@ -141,9 +141,9 @@ void erase(string fileName)
     sort();
     for (int i = f; i < noOfFiles; ++i)
     {
-        name[i] = name[i] + 1;
-        addr[i] = addr[i] + 1;
-        size[i] = size[i] + 1;
+        name[i] = name[i + 1];
+        addr[i] = addr[i + 1];
+        size[i] = size[i + 1];
     }
     noOfFiles = -1;
 
