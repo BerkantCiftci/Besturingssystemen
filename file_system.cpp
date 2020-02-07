@@ -32,9 +32,9 @@ void sort()
                 addr[i] = addr[i + 1];
                 addr[i + 1] = tmp;
 
-                tmp = size[i];
-                size[i] = size[i + 1];
-                size[i + 1] = tmp;
+                tmp = length[i];
+                length[i] = length[i + 1];
+                length[i + 1] = tmp;
 
                 s = name[i];
                 name[i] = name[i + 1];
@@ -52,7 +52,7 @@ long findFreeSpace(long fileSize)
     long prev = 0;
     for (int i = 0; i < noOfFiles; i++)
     {
-        // Verbeteren.
+        // Verbeterd.
         if (addr[i] - prev > fileSize)
         {
             // prev += 1;
@@ -67,214 +67,216 @@ long findFreeSpace(long fileSize)
             return prev;
         return -1;
     }
-}
 
-int findFile(string fileName)
-{
-    for (int i = 0; i < noOfFiles; i++)
+    int findFile(string fileName)
     {
-        if (name[i] == fileName)
-            return i;
-    }
-    return -1;
-}
-
-void store(long fileSize, string fileName, char *data)
-{
-    int f = findFreeSpace(fileSize);
-    if (f == -1)
-    {
-        cout << "Not enough space." << endl;
-    }
-    else if (findFile(fileName) != -1)
-    {
-        cout << "File already exists." << endl;
-    }
-    else
-    {
-
-        // Done.
-
-        name[noOfFiles] = fileName;
-        addr[noOfFiles] = f;
-        size[noOfFiles] = fileSize;
-        noOfFiles++;
-
-        for (int i = 0; i < fileSize; i++)
+        for (int i = 0; i < noOfFiles; i++)
         {
-            writeByte(data[i], f + i);
+            if (name[i] == fileName)
+                return i;
+        }
+        return -1;
+    }
+
+    void store(long fileSize, string fileName, char *data)
+    {
+        int f = findFreeSpace(fileSize);
+        if (f == -1)
+        {
+            cout << "Not enough space." << endl;
+        }
+        else if (findFile(fileName) != -1)
+        {
+            cout << "File already exists." << endl;
+        }
+        else
+        {
+
+            // Done.
+
+            name[noOfFiles] = fileName;
+            addr[noOfFiles] = f;
+            size[noOfFiles] = fileSize;
+            noOfFiles++;
+
+            for (int i = 0; i < fileSize; i++)
+            {
+                writeByte(data[i], f + i);
+            }
         }
     }
-}
 
-string retrieve(string fileName)
-{
-    int f = findFile(fileName);
-    if (f == -1)
+    string retrieve(string fileName)
     {
-        cout << "File not found." << endl;
-        return string();
-    }
-    string ret;
-    for (long a = addr[f]; a < addr[f] + size[f]; a++)
-    {
+        int f = findFile(fileName);
+        if (f == -1)
+        {
+            cout << "File not found." << endl;
+            return string();
+        }
+        string ret;
+        for (long a = addr[f]; a < addr[f] + size[f]; a++)
+        {
 
-        // Done.
+            // Done.
 
-        ret += (char)readByte(a);
-    }
-    return ret;
-}
-
-void erase(string fileName)
-{
-    int f = findFile(fileName);
-    if (f == -1)
-    {
-        cout << "File not found." << endl;
-        return;
+            ret += (char)readByte(a);
+        }
+        return ret;
     }
 
-    // Verbeterd.
-
-    cout << "File is being erased." << endl;
-    name[f].clear();
-    addr[f] = addr[noOfFiles-1] + size[noOfFiles-1];
-    size[f] = 0;
-    sort();
-    noOfFiles--;
-
-    cout << "Done!" << endl;
-}
-
-void copy(string fileName1, string fileName2)
-{
-    string contents = retrieve(fileName1);
-    long fileSize = contents.length();
-    if (fileSize > 0)
+    void erase(string fileName)
     {
-        char *data = (char *)malloc(fileSize);
-        contents.copy(data, fileSize);
-        store(fileSize, fileName2, data);
-        free(data);
-    }
-}
-
-void rename(string fileName1, string fileName2)
-{
-    int f = findFile(fileName1);
-    if (f == -1)
-    {
-        cout << "File not found." << endl;
-    }
-    else if (findFile(fileName2) != -1)
-    {
-        cout << "File already exists." << endl;
-    }
-    else
-    {
-
-        // Done
-        name[f] = fileName2;
-    }
-}
-
-void files()
-{
-    for (int i = 0; i < noOfFiles; i++)
-    {
-        cout << name[i] << '\t' << size[i] << endl;
-    }
-}
-
-long freeSpace()
-{
-    sort();
-    long largest = 0, start = 0, length;
-    for (int i = 0; i < noOfFiles; i++)
-    {
+        int f = findFile(fileName);
+        if (f == -1)
+        {
+            cout << "File not found." << endl;
+            return;
+        }
 
         // Verbeterd.
-        length = addr[i + 1] - start;
 
-        if (length > largest)
-            largest = length;
-        start = addr[i] + size[i];
-    }
-    length = getSize() - start;
-    if (length > largest)
-        largest = length;
-    return largest;
-}
-
-void pack()
-{
-    sort();
-    long pos = 0, newpos;
-    for (int i = 0; i < noOfFiles; i++)
-    {
-        newpos = pos;
-        for (long a = addr[i]; a < addr[i] + size[i]; a++)
+        cout << "File is being erased." << endl;
+        sort();
+        for (int i = f; i < noOfFiles; ++i)
         {
-
-            // Not done.
-
-            pos++;
+            name[i] = name[i] + 1;
+            addr[i] = addr[i] + 1;
+            size[i] = size[i] + 1;
         }
-        addr[i] = newpos;
-    }
-}
+        noOfFiles = -1;
 
-int main()
-{
-    string command;
-    while (true)
+        cout << "Done!" << endl;
+    }
+
+    void copy(string fileName1, string fileName2)
     {
-        command = readLine();
-        if (command == "STORE")
+        string contents = retrieve(fileName1);
+        long fileSize = contents.length();
+        if (fileSize > 0)
         {
-            string fileName = readLine();
-            long fileSize = stoi(readLine());
             char *data = (char *)malloc(fileSize);
-            cin.read(data, fileSize);
-            store(fileSize, fileName, data);
+            contents.copy(data, fileSize);
+            store(fileSize, fileName2, data);
             free(data);
         }
-        if (command == "RETRIEVE")
+    }
+
+    void rename(string fileName1, string fileName2)
+    {
+        int f = findFile(fileName1);
+        if (f == -1)
         {
-            string fileName = readLine();
-            string data = retrieve(fileName);
-            if (data.length() > 0)
-                cout << data << endl;
+            cout << "File not found." << endl;
         }
-        if (command == "ERASE")
+        else if (findFile(fileName2) != -1)
         {
-            string fileName = readLine();
-            erase(fileName);
+            cout << "File already exists." << endl;
         }
-        if (command == "COPY")
+        else
         {
-            string fileName1 = readLine();
-            string fileName2 = readLine();
-            copy(fileName1, fileName2);
-        }
-        if (command == "RENAME")
-        {
-            string fileName1 = readLine();
-            string fileName2 = readLine();
-            rename(fileName1, fileName2);
-        }
-        if (command == "FILES")
-        {
-            files();
-        }
-        if (command == "FREESPACE")
-        {
-            cout << freeSpace() << endl;
-        }
-        if (command == "PACK")
-        {
-            pack();
+
+            // Done
+            name[f] = fileName2;
         }
     }
-}
+
+    void files()
+    {
+        for (int i = 0; i < noOfFiles; i++)
+        {
+            cout << name[i] << '\t' << size[i] << endl;
+        }
+    }
+
+    long freeSpace()
+    {
+        sort();
+        long largest = 0, start = 0, length;
+        for (int i = 0; i < noOfFiles; i++)
+        {
+
+            // Verbeterd.
+            length = addr[i + 1] - start;
+
+            if (length > largest)
+                largest = length;
+            start = addr[i] + size[i];
+        }
+        length = getSize() - start;
+        if (length > largest)
+            largest = length;
+        return largest;
+    }
+
+    void pack()
+    {
+        sort();
+        long pos = 0, newpos;
+        for (int i = 0; i < noOfFiles; i++)
+        {
+            newpos = pos;
+            for (long a = addr[i]; a < addr[i] + size[i]; a++)
+            {
+
+                // Not done.
+
+                pos++;
+            }
+            addr[i] = newpos;
+        }
+    }
+
+    int main()
+    {
+        string command;
+        while (true)
+        {
+            command = readLine();
+            if (command == "STORE")
+            {
+                string fileName = readLine();
+                long fileSize = stoi(readLine());
+                char *data = (char *)malloc(fileSize);
+                cin.read(data, fileSize);
+                store(fileSize, fileName, data);
+                free(data);
+            }
+            if (command == "RETRIEVE")
+            {
+                string fileName = readLine();
+                string data = retrieve(fileName);
+                if (data.length() > 0)
+                    cout << data << endl;
+            }
+            if (command == "ERASE")
+            {
+                string fileName = readLine();
+                erase(fileName);
+            }
+            if (command == "COPY")
+            {
+                string fileName1 = readLine();
+                string fileName2 = readLine();
+                copy(fileName1, fileName2);
+            }
+            if (command == "RENAME")
+            {
+                string fileName1 = readLine();
+                string fileName2 = readLine();
+                rename(fileName1, fileName2);
+            }
+            if (command == "FILES")
+            {
+                files();
+            }
+            if (command == "FREESPACE")
+            {
+                cout << freeSpace() << endl;
+            }
+            if (command == "PACK")
+            {
+                pack();
+            }
+        }
+    }
